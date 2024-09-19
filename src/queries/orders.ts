@@ -7,8 +7,41 @@ import { Order } from "~/models/Order";
 
 export function useOrders() {
   return useQuery<Order[], AxiosError>("orders", async () => {
-    const res = await axios.get<Order[]>(`${API_PATHS.order}/order`);
-    return res.data;
+    return [
+      {
+        id: "1",
+        address: {
+          address: "some address",
+          firstName: "Name",
+          lastName: "Surname",
+          comment: "",
+        },
+        items: [
+          { productId: "7567ec4b-b10c-48c5-9345-fc73c48a80aa", count: 2 },
+          { productId: "7567ec4b-b10c-45c5-9345-fc73c48a80a1", count: 5 },
+        ],
+        statusHistory: [
+          { status: OrderStatus.Open, timestamp: Date.now(), comment: "New order" },
+        ],
+      },
+      {
+        id: "2",
+        address: {
+          address: "another address",
+          firstName: "John",
+          lastName: "Doe",
+          comment: "Ship fast!",
+        },
+        items: [{ productId: "7567ec4b-b10c-48c5-9345-fc73c48a80aa", count: 3 }],
+        statusHistory: [
+          {
+            status: OrderStatus.Sent,
+            timestamp: Date.now(),
+            comment: "Fancy order",
+          },
+        ],
+      },
+    ];    
   });
 }
 
@@ -22,25 +55,12 @@ export function useInvalidateOrders() {
 
 export function useUpdateOrderStatus() {
   return useMutation(
-    (values: { id: string; status: OrderStatus; comment: string }) => {
-      const { id, ...data } = values;
-      return axios.put(`${API_PATHS.order}/order/${id}/status`, data, {
-        headers: {
-          Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
-        },
-      });
-    }
+    (values: { id: string; status: OrderStatus; comment: string }) => Promise.resolve(true)
   );
 }
 
 export function useSubmitOrder() {
-  return useMutation((values: Omit<Order, "id">) => {
-    return axios.put<Omit<Order, "id">>(`${API_PATHS.order}/order`, values, {
-      headers: {
-        Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
-      },
-    });
-  });
+  return useMutation((values: Omit<Order, "id">) => Promise.resolve(true))
 }
 
 export function useInvalidateOrder() {
@@ -54,10 +74,6 @@ export function useInvalidateOrder() {
 
 export function useDeleteOrder() {
   return useMutation((id: string) =>
-    axios.delete(`${API_PATHS.order}/order/${id}`, {
-      headers: {
-        Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
-      },
-    })
+    Promise.resolve(true)
   );
 }

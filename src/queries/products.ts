@@ -4,14 +4,56 @@ import { AvailableProduct } from "~/models/Product";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import React from "react";
 
+const items = [
+  {
+    description: "Short Product Description1",
+    id: "7567ec4b-b10c-48c5-9345-fc73c48a80aa",
+    price: 24,
+    title: "ProductOne",
+    count: 2
+  },
+  {
+    description: "Short Product Description7",
+    id: "7567ec4b-b10c-48c5-9345-fc73c48a80a1",
+    price: 15,
+    title: "ProductTitle",
+    count: 10
+  },
+  {
+    description: "Short Product Description2",
+    id: "7567ec4b-b10c-48c5-9345-fc73c48a80a3",
+    price: 23,
+    title: "Product",
+    count: 14
+  },
+  {
+    description: "Short Product Description4",
+    id: "7567ec4b-b10c-48c5-9345-fc73348a80a1",
+    price: 15,
+    title: "ProductTest",
+    count: 5
+  },
+  {
+    description: "Short Product Descriptio1",
+    id: "7567ec4b-b10c-48c5-9445-fc73c48a80a2",
+    price: 23,
+    title: "Product2",
+    count: 8
+  },
+  {
+    description: "Short Product Description7",
+    id: "7567ec4b-b10c-45c5-9345-fc73c48a80a1",
+    price: 15,
+    title: "ProductName",
+    count: 1
+  },
+];
+
 export function useAvailableProducts() {
   return useQuery<AvailableProduct[], AxiosError>(
     "available-products",
     async () => {
-      const res = await axios.get<AvailableProduct[]>(
-        `${API_PATHS.bff}/product/available`
-      );
-      return res.data;
+      return items;
     }
   );
 }
@@ -28,10 +70,11 @@ export function useAvailableProduct(id?: string) {
   return useQuery<AvailableProduct, AxiosError>(
     ["product", { id }],
     async () => {
-      const res = await axios.get<AvailableProduct>(
-        `${API_PATHS.bff}/product/${id}`
-      );
-      return res.data;
+      const item = items.find((item) => item.id === id);
+      if(!item) {
+        throw new AxiosError("Product not found", "404");
+      }
+      return item;
     },
     { enabled: !!id }
   );
@@ -47,21 +90,10 @@ export function useRemoveProductCache() {
 }
 
 export function useUpsertAvailableProduct() {
-  return useMutation((values: AvailableProduct) =>
-    axios.put<AvailableProduct>(`${API_PATHS.bff}/product`, values, {
-      headers: {
-        Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
-      },
-    })
-  );
+  return useMutation((values: AvailableProduct) => Promise.resolve(true));
 }
 
 export function useDeleteAvailableProduct() {
-  return useMutation((id: string) =>
-    axios.delete(`${API_PATHS.bff}/product/${id}`, {
-      headers: {
-        Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
-      },
-    })
+  return useMutation((id: string) => Promise.resolve(true)
   );
 }

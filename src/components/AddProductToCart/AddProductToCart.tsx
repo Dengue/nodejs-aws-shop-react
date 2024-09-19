@@ -35,16 +35,16 @@ export default function AddProductToCart({ product }: AddProductToCartProps) {
   return cartItem ? (
     <>
       <IconButton disabled={isFetching} onClick={removeProduct} size="large">
-        <Remove color={"secondary"} />
+        <Remove color={"primary"} />
       </IconButton>
       <Typography align="center">{cartItem.count}</Typography>
       <IconButton disabled={isFetching} onClick={addProduct} size="large">
-        <Add color={"secondary"} />
+        <Add color={"primary"} />
       </IconButton>
     </>
   ) : (
     <IconButton disabled={isFetching} onClick={addProduct} size="large">
-      <CartIcon color={"secondary"} />
+      <CartIcon color={"primary"} />
     </IconButton>
   );
 }
